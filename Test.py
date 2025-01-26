@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 import json
-
+import shutil
 
 from openai import OpenAI
 
@@ -24,7 +24,8 @@ def extract_app_info(input_text):
             "by extracting info from the natural language input into 2 pices of info: The application type AND the platform. Do so by having"
             "JSON keys with names: app_type and dep_plat"
             "If none is detected, write N/A"
-            "Correct any mistakes if there is any please"},
+            "Correct any mistakes if there is any please, and make them lowercased, with the first letter caps"
+            "Now, the input will also include a github repository link, add a key called git_repo. Make sure no spaces before or after"},
 
             {"role" :"user", "content" : input_text}
         
@@ -33,10 +34,17 @@ def extract_app_info(input_text):
     dict_data = json.loads(response.choices[0].message.content.strip())
     app_type = dict_data["app_type"]
     dep_plat = dict_data["dep_plat"]
-    return app_type,dep_plat
+    git_repo = dict_data["git_repo"]
+    return app_type,dep_plat,git_repo
 
 
 if __name__ == "__main__":
     input = input("Info about your app: ")
-    type,dep = extract_app_info(input)
-    print("AI extracted specs:", type, dep)
+    type,dep,link = extract_app_info(input)
+    print("AI extracted specs:", type, dep , link)
+    
+    current_dir = os.getcwd()
+    clone_dir = os.path.join(current_dir, "clone_repo1")
+    os.system(f'git clone "{link}" "{clone_dir}"')
+    
+    shutil.rmtree(clone_dir)
