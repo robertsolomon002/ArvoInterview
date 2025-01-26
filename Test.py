@@ -38,13 +38,16 @@ def extract_app_info(input_text):
     return app_type,dep_plat,git_repo
 
 
+
+
 if __name__ == "__main__":
     input = input("Info about your app: ")
     type,dep,link = extract_app_info(input)
     print("AI extracted specs:", type, dep , link)
     
     current_dir = os.getcwd()
-    clone_dir = os.path.join(current_dir, "clone_repo1")
+    clone_dir = os.path.join(current_dir, "clone_repo")
     os.system(f'git clone "{link}" "{clone_dir}"')
     
-    shutil.rmtree(clone_dir)
+    
+
